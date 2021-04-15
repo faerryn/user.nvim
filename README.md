@@ -1,5 +1,5 @@
 # USER.NVIM
-Since the advent of vim and neovim, countless package managers have appeared and dissappeared. Well, here's another one, inspired by Emacs' (straight.el) and use-package
+Since the advent of vim and neovim, countless package managers have appeared and dissappeared. Well, here's another one, inspired by Emacs' straight.el and use-package
 
 ## Philosophy
 Configurations should be reproducible and require minimal user effort.
