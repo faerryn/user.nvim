@@ -11,7 +11,7 @@ function Deque:new()
 	return deque
 end
 
-function Deque:__len()
+function Deque:len()
 	return self.last + 1 - self.first
 end
 
@@ -24,7 +24,7 @@ function Deque:back()
 end
 
 function Deque:pop_front()
-	if self:__len() == 0 then return nil end
+	if self:len() == 0 then return nil end
 	local value = self:front()
 	self.list[self.first] = nil
 	self.first = self.first + 1
@@ -32,7 +32,7 @@ function Deque:pop_front()
 end
 
 function Deque:pop_back()
-	if self:__len() == 0 then return nil end
+	if self:len() == 0 then return nil end
 	local value = self:back()
 	self.list[self.back] = nil
 	self.last = self.last - 1

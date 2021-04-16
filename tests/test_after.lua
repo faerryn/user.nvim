@@ -1,5 +1,6 @@
--- nvim -u tests/init.lua
--- :messages
+--
+-- Test the 'after' option
+-- 
 
 vim.o.rtp = ".,"..vim.o.rtp
 
