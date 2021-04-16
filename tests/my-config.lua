@@ -107,12 +107,6 @@ vim.api.nvim_command("command! Sshell split term://$SHELL")
 vim.api.nvim_command("command! Vshell vsplit term://$SHELL")
 vim.api.nvim_command("command! Tshell tabnew term://$SHELL")
 
--- local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/faerryn-user.nvim"
--- if vim.fn.empty(vim.fn.glob(user_install_path)) > 0 then
--- 	os.execute([[git clone --depth 1 https://github.com/faerryn/user.nvim.git ']]..user_install_path..[[']])
--- end
--- vim.api.nvim_command("packadd faerryn-user.nvim")
-
 local user = require"user"
 user.setup()
 local use = user.use

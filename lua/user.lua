@@ -35,12 +35,13 @@ local function setup(args)
 end
 
 local function startup()
-	packman:await()
+	packman:await_jobs()
 	packman:do_config_queue()
 end
 
 local function update()
 	packman:update()
+	packman:await_jobs()
 end
 
 local function clean()

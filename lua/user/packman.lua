@@ -7,16 +7,10 @@ function PackMan:new(args)
 	local packman = {
 		path = args.path or vim.fn.resolve(vim.fn.stdpath("data").."/site/pack/user/"),
 
-		command_install = args.command_install or "git clone --depth 1 --recurse-submodules",
-		command_update = args.command_update or "git pull --rebase",
-		command_clean = args.command_clean or "rm -rf",
-
 		packs = {},
 
 		config_queue = Deque:new(),
 		config_done = {},
-
-		jobs = Deque:new(),
 	}
 	self.__index = self
 	setmetatable(packman, self)
@@ -31,15 +25,19 @@ function PackMan:request(pack)
 	pack.install_path = vim.fn.resolve(self.path.."/opt/"..vim.fn.fnameescape(pack.name))
 
 	if vim.fn.empty(vim.fn.glob(pack.install_path)) > 0 then
-		self.jobs:push_back(io.popen(self.command_install..[[ ']]..pack.source..[[' ']]..pack.install_path..[[']], "r"))
+		pack.job = io.popen([[git clone --depth 1 --recurse-submodules ']]..pack.source..[[' ']]..pack.install_path..[[']], "r")
 	end
 
 	self.config_queue:push_back(pack)
 end
 
-function PackMan:await()
-	while self.jobs:len() > 0 do
-		self.jobs:pop_back():close()
+function PackMan:await_jobs()
+	for _, pack in pairs(self.packs) do
+		if pack.job then
+			pack.job:close()
+			vim.api.nvim_command("silent! helptags "..vim.fn.resolve(pack.install_path.."/doc"))
+			pack.job = nil
+		end
 	end
 end
 
@@ -74,10 +72,7 @@ end
 
 function PackMan:update()
 	for name, pack in pairs(self.packs) do
-		self.jobs:push_back(io.popen([[git -C ']]..pack.install_path..[[' pull]], "r"))
-	end
-	while self.jobs:len() > 0 do
-		self.jobs:pop_back():close()
+		pack.job = io.popen([[git -C ']]..pack.install_path..[[' pull]], "r")
 	end
 end
 
@@ -93,7 +88,7 @@ function PackMan:clean()
 
 	for path, should_remove in pairs(paths) do
 		if should_remove then
-			os.execute(self.command_clean.." "..path)
+			os.execute("rm -rf "..path)
 		end
 	end
 end
