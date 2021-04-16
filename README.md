@@ -70,7 +70,7 @@ local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/faerryn/u
 if vim.fn.empty(vim.fn.glob(user_install_path)) > 0 then
 	os.execute([[git clone --depth 1 https://github.com/faerryn/user.nvim.git ']]..user_install_path..[[']])
 end
-vim.api.nvim_command("packadd faerryn-user.nvim")
+vim.api.nvim_command("packadd faerryn/user.nvim")
 
 local user = require("user")
 user.setup()
@@ -87,7 +87,7 @@ use {
 	end,
 }
 
--- gitsigns.nvim requires plenary.nvim, but plenary.nvim's declaration is 
+-- gitsigns.nvim requires plenary.nvim, but plenary.nvim's declaration is
 use {
 	"lewis6991/gitsigns.nvim",
 	after = "nvim-lua/plenary.nvim",
@@ -101,7 +101,7 @@ use "nvim-lua/plenary.nvim"
 
 # News and FAQ
 ## The last update broke everything!
-That's terrible! Please file an issue. Try these steps 
+That's terrible! Please file an issue. Try these steps
 
 - If you use [bootstrapping](#bootstrap-user.nvim), replace your old bootstrapping code with the most recent bit.
 
