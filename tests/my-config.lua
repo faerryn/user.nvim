@@ -1,6 +1,6 @@
 --
 -- Test with my config!
--- 
+--
 
 vim.o.rtp = ".,"..vim.o.rtp
 
