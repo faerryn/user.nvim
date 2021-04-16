@@ -84,7 +84,7 @@ end
 function PackMan:clean()
 	local paths = {}
 
-	for path in vim.fn.glob(vim.fn.resolve(self.path.."/*/*")):gmatch("[^\n]+") do
+	for path in vim.fn.glob(vim.fn.resolve(self.path.."/*/*/*")):gmatch("[^\n]+") do
 		paths[path] = true
 	end
 	for _, pack in pairs(self.packs) do
