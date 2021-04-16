@@ -46,10 +46,27 @@ clean
 ```lua
 require("user").clean()
 ```
+
+## Bootstrap user.nvim
+```lua
+local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/faerryn/user.nvim"
+if vim.fn.empty(vim.fn.glob(user_install_path)) > 0 then
+	os.execute([[git clone --depth 1 https://github.com/faerryn/user.nvim.git ']]..user_install_path..[[']])
+end
+vim.api.nvim_command("packadd faerryn/user.nvim")
+
+local user = require("user")
+user.setup()
+local use = user.use
+
+-- user.nvim needs to manage itself!
+use "faerryn/user.nvim"
+```
+
 ## Example
 ```lua
 -- Bootstrapping
-local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/faerryn-user.nvim"
+local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/faerryn/user.nvim"
 if vim.fn.empty(vim.fn.glob(user_install_path)) > 0 then
 	os.execute([[git clone --depth 1 https://github.com/faerryn/user.nvim.git ']]..user_install_path..[[']])
 end
@@ -81,3 +98,11 @@ use {
 
 use "nvim-lua/plenary.nvim"
 ```
+
+# News and FAQ
+## The last update broke everything!
+That's terrible! Please file an issue. Try these steps 
+
+- If you use [bootstrapping](#bootstrap-user.nvim), replace your old bootstrapping code with the most recent bit.
+
+- Try deleting user's plugins directory with `rm -r ~/.local/share/nvim/site/pack/user/`.
