@@ -103,6 +103,6 @@ use "nvim-lua/plenary.nvim"
 ## The last update broke everything!
 That's terrible! Please file an issue. Try these steps
 
-- If you use [bootstrapping](#bootstrap-user.nvim), replace your old bootstrapping code with the most recent bit.
+- If you use [bootstrapping](#bootstrap-usernvim), replace your old bootstrapping code with the most recent bit.
 
 - Try deleting user's plugins directory with `rm -r ~/.local/share/nvim/site/pack/user/`.
