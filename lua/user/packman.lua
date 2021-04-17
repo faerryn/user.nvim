@@ -18,6 +18,9 @@ function PackMan:new(args)
 end
 
 function PackMan:request(pack)
+	if self.packs[pack.name] then
+		error(pack.name.." is requested more than once")
+	end
 	self.packs[pack.name] = pack
 
 	if pack.init then pack.init() end

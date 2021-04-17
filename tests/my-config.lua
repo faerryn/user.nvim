@@ -151,7 +151,6 @@ use {
 	end,
 }
 
-use "nvim-lua/plenary.nvim"
 use {
 	"lewis6991/gitsigns.nvim",
 	after = "nvim-lua/plenary.nvim",
