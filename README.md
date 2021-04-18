@@ -32,7 +32,7 @@ require("user").use {
 		-- will run immediately unless disabled = true.
 	end,
 	config = function()
-		-- will run immediately after the package is loaded.
+		-- will run after the package is loaded.
 	end,
 }
 ```
