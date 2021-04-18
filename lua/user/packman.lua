@@ -36,7 +36,7 @@ function PackMan:request(pack)
 
 	if pack.init then pack.init() end
 
-	pack.install_path = vim.fn.resolve(self.path.."/opt/"..vim.fn.fnameescape(pack.name))
+	pack.install_path = vim.fn.resolve(self.path.."/opt/"..pack.name)
 
 	self:install(pack)
 
