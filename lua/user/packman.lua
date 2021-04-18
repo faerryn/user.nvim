@@ -67,15 +67,16 @@ end
 function PackMan:config(pack)
 	vim.api.nvim_command("packadd "..pack.packadd_path)
 
-	local after_sources = vim.fn.glob(pack.install_path.."/after/plugin/**/*.vim")
-	for after_source in after_sources:gmatch("[^\n]+") do
-		vim.api.nvim_command("source "..after_source)
-	end
-	if after_sources:len() > 0 then
-		print(pack.name.." uses the /after/ directory, which is not intended as per vim#1994. Please contact your plugin author.")
+	-- work around vim#1994
+	if vim.v.vim_did_enter > 0 then
+		for after_source in vim.fn.glob(pack.install_path.."/after/plugin/**/*.vim"):gmatch("[^\n]+") do
+			vim.api.nvim_command("source "..after_source)
+		end
 	end
 
 	if pack.config then pack.config() end
+
+	self.config_done[pack.name] = true
 end
 
 function PackMan:can_config(pack)
@@ -95,7 +96,6 @@ function PackMan:do_config_queue()
 
 		if self:can_config(pack) then
 			self:config(pack)
-			self.config_done[pack.name] = true
 			counter = 0
 		else
 			self.config_queue:push_back(pack)
