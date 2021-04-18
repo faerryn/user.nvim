@@ -12,6 +12,8 @@ local function use(args)
 
 		pack.name = args[1]
 
+		pack.repo = args.repo
+
 		pack.init = args.init
 		pack.config = args.config
 
@@ -24,7 +26,7 @@ local function use(args)
 		error("user.user -- invalid args")
 	end
 
-	pack.source = "https://github.com/"..pack.name..".git"
+	pack.repo = pack.repo or "https://github.com/"..pack.name..".git"
 
 	packman:request(pack)
 end

@@ -17,6 +17,17 @@ function PackMan:new(args)
 	return packman
 end
 
+function PackMan:install(pack)
+	if vim.fn.empty(vim.fn.glob(pack.install_path)) == 0 then
+		return
+	end
+
+	local command = "git clone --depth 1 --recurse-submodules "
+	command = command..[[']]..pack.repo..[[' ']]..pack.install_path..[[']]
+
+	pack.job = io.popen(command, "r")
+end
+
 function PackMan:request(pack)
 	if self.packs[pack.name] then
 		error(pack.name.." is requested more than once")
@@ -27,9 +38,7 @@ function PackMan:request(pack)
 
 	pack.install_path = vim.fn.resolve(self.path.."/opt/"..vim.fn.fnameescape(pack.name))
 
-	if vim.fn.empty(vim.fn.glob(pack.install_path)) > 0 then
-		pack.job = io.popen([[git clone --depth 1 --recurse-submodules ']]..pack.source..[[' ']]..pack.install_path..[[']], "r")
-	end
+	self:install(pack)
 
 	self.config_queue:push_back(pack)
 end
@@ -38,10 +47,24 @@ function PackMan:await_jobs()
 	for _, pack in pairs(self.packs) do
 		if pack.job then
 			pack.job:close()
-			vim.api.nvim_command("silent! helptags "..vim.fn.resolve(pack.install_path.."/doc"))
+			vim.api.nvim_command("silent! helptags "..pack.install_path.."/doc")
 			pack.job = nil
 		end
 	end
+end
+
+function PackMan:config(pack)
+	vim.api.nvim_command("packadd "..pack.name)
+
+	local after_sources = vim.fn.glob(pack.install_path.."/after/plugin/**/*.vim")
+	for after_source in after_sources:gmatch("[^\n]+") do
+		vim.api.nvim_command("source "..after_source)
+	end
+	if after_sources:len() > 0 then
+		print(pack.name.." uses the /after/ directory, which is not intended as per vim#1994. Please contact your plugin author.")
+	end
+
+	if pack.config then pack.config() end
 end
 
 function PackMan:can_config(pack)
@@ -60,10 +83,7 @@ function PackMan:do_config_queue()
 		local pack = self.config_queue:pop_front()
 
 		if self:can_config(pack) then
-
-			vim.api.nvim_command("packadd "..pack.name)
-			if pack.config then pack.config() end
-
+			self:config(pack)
 			self.config_done[pack.name] = true
 			counter = 0
 		else
