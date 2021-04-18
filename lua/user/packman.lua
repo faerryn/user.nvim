@@ -1,4 +1,5 @@
 local Deque = require("user.deque").Deque
+local escapist = require("user.escapist")
 
 local PackMan = {}
 
@@ -23,6 +24,9 @@ function PackMan:install(pack)
 	end
 
 	local command = "git clone --depth 1 --recurse-submodules "
+	if pack.branch then
+		command = command..[[--branch ']]..pack.branch..[[' ]]
+	end
 	command = command..[[']]..pack.repo..[[' ']]..pack.install_path..[[']]
 
 	pack.job = io.popen(command, "r")
@@ -36,7 +40,14 @@ function PackMan:request(pack)
 
 	if pack.init then pack.init() end
 
-	pack.install_path = vim.fn.resolve(self.path.."/opt/"..pack.name)
+	local packadd_path = pack.name
+	if pack.branch then
+		packadd_path = packadd_path.."/branch/"..escapist.escape(pack.branch)
+	else
+		packadd_path = packadd_path.."/default/default"
+	end
+	pack.packadd_path = vim.fn.resolve(packadd_path)
+	pack.install_path = vim.fn.resolve(self.path.."/opt/"..pack.packadd_path)
 
 	self:install(pack)
 
@@ -54,7 +65,7 @@ function PackMan:await_jobs()
 end
 
 function PackMan:config(pack)
-	vim.api.nvim_command("packadd "..pack.name)
+	vim.api.nvim_command("packadd "..pack.packadd_path)
 
 	local after_sources = vim.fn.glob(pack.install_path.."/after/plugin/**/*.vim")
 	for after_source in after_sources:gmatch("[^\n]+") do
@@ -102,7 +113,7 @@ end
 function PackMan:clean()
 	local paths = {}
 
-	for path in vim.fn.glob(vim.fn.resolve(self.path.."/*/*/*")):gmatch("[^\n]+") do
+	for path in vim.fn.glob(vim.fn.resolve(self.path.."/opt/*/*/*/*")):gmatch("[^\n]+") do
 		paths[path] = true
 	end
 	for _, pack in pairs(self.packs) do

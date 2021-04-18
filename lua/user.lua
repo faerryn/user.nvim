@@ -13,6 +13,7 @@ local function use(args)
 		pack.name = args[1]
 
 		pack.repo = args.repo
+		pack.branch = args.branch
 
 		pack.init = args.init
 		pack.config = args.config
