@@ -1,4 +1,9 @@
+--
+-- Test escapist.
+--
+
 vim.o.rtp = ".,"..vim.o.rtp
+vim.o.pp = ".,"..vim.o.pp
 
 local escapist = require("user.escapist")
 
