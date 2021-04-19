@@ -34,7 +34,7 @@ end
 
 local function setup(args)
 	packman = require'user.packman'.PackMan:new(args)
-	vim.api.nvim_command([[autocmd VimEnter * ++once lua require("user").startup()]])
+	vim.api.nvim_command([[autocmd VimEnter * ++once execute 'lua require("user").startup()' | doautocmd BufNewFile]])
 end
 
 local function startup()
