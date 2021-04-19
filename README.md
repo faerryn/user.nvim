@@ -96,7 +96,7 @@ use {
 
 use "nvim-lua/plenary.nvim"
 
-use.startup()
+user.startup()
 ```
 
 # News and FAQ
