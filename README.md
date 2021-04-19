@@ -33,6 +33,7 @@ use {...}: manage your packages
 ```lua
 use {
 	"package_author/package_name",
+	branch = nil, -- if non-nil, will use that branch
 	disabled = false, -- if true, ignored this use call.
 	after = {}, -- list of dependencies, run config() only after these have been loaded
 	init = function()
