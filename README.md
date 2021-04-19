@@ -22,9 +22,16 @@ EOF
 ```
 
 ## Usage
-use {...}
+setup(): mandatory to make the lua work
 ```lua
-require("user").use {
+local user = require("user")
+user.setup()
+local use = user.user
+```
+
+use {...}: manage your packages
+```lua
+use {
 	"package_author/package_name",
 	disabled = false, -- if true, ignored this use call.
 	after = {}, -- list of dependencies, run config() only after these have been loaded
@@ -37,12 +44,17 @@ require("user").use {
 }
 ```
 
-update
+startup(): call after all `use` calls
+```lua
+user.startup()
+```
+
+update(): update your packages
 ```lua
 require("user").update()
 ```
 
-clean
+clean(): delete unused packages
 ```lua
 require("user").clean()
 ```
@@ -83,6 +95,8 @@ use {
 }
 
 use "nvim-lua/plenary.nvim"
+
+use.startup()
 ```
 
 # News and FAQ
@@ -91,3 +105,5 @@ That's terrible! I probably introduced a breaking change. Try these steps.
 - If you use [bootstrapping](#bootstrap-usernvim), replace your old bootstrapping code with the most recent bit.
 - Then, delete `user.nvim`'s plugins directory with `rm -r ~/.local/share/nvim/site/pack/user/`.
 - If it doesn't work, please file an issue!
+## Packages are installing, but my config()s aren't loading!
+Make sure you have use.startup() after all your use calls. It will get called automatically on VimEnter, but relying on that means that many vim options will not apply to the first buffer.
