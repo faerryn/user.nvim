@@ -106,4 +106,4 @@ That's terrible! I probably introduced a breaking change. Try these steps.
 - Then, delete `user.nvim`'s plugins directory with `rm -r ~/.local/share/nvim/site/pack/user/`.
 - If it doesn't work, please file an issue!
 ## Packages are installing, but my config()s aren't loading!
-Make sure you have use.startup() after all your use calls. It will get called automatically on VimEnter, but relying on that means that many vim options will not apply to the first buffer.
+Make sure you have `use.startup()` after all your use calls. It will get called automatically on VimEnter, but relying on that means that many vim options will not apply to the first buffer.
