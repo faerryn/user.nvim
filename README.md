@@ -34,6 +34,9 @@ use {...}: manage your packages
 use {
 	"package_author/package_name",
 	disabled = false, -- if true, ignored this use call.
+	repo = nil, -- if non-nil, then clone from this repo instead
+	branch = nil, -- if non-nil, then clone from this branch instead of default branch
+	subdir = nil, -- if non-nil, then will add that subdirectory to rtp
 	after = {}, -- list of dependencies, run config() only after these have been loaded
 	init = function()
 		-- will run immediately unless disabled = true.
