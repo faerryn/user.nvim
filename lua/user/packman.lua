@@ -40,14 +40,16 @@ function PackMan:request(pack)
 
 	if pack.init then pack.init() end
 
-	local packadd_path = pack.name
+	local install_path = pack.name
 	if pack.branch then
-		packadd_path = packadd_path.."/branch/"..escapist.escape(pack.branch)
+		install_path = install_path.."/branch/"..escapist.escape(pack.branch)
 	else
-		packadd_path = packadd_path.."/default/default"
+		install_path = install_path.."/default/default"
 	end
+	local packadd_path = install_path
+	if pack.subdir then packadd_path = packadd_path.."/"..pack.subdir end
 	pack.packadd_path = vim.fn.resolve(packadd_path)
-	pack.install_path = vim.fn.resolve(self.path.."/opt/"..pack.packadd_path)
+	pack.install_path = vim.fn.resolve(self.path.."/opt/"..install_path)
 
 	self:install(pack)
 

@@ -15,6 +15,8 @@ local function use(args)
 		pack.repo = args.repo
 		pack.branch = args.branch
 
+		pack.subdir = args.subdir
+
 		pack.init = args.init
 		pack.config = args.config
 
