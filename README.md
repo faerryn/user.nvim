@@ -33,7 +33,6 @@ use {...}: manage your packages
 ```lua
 use {
 	"package_author/package_name",
-	branch = nil, -- if non-nil, will use that branch
 	disabled = false, -- if true, ignored this use call.
 	repo = nil, -- if non-nil, then clone from this repo instead
 	branch = nil, -- if non-nil, then clone from this branch instead of default branch
