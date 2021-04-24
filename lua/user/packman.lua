@@ -25,9 +25,9 @@ function PackMan:install(pack)
 
 	local command = "git clone --depth 1 --recurse-submodules "
 	if pack.branch then
-		command = command..[[--branch ']]..pack.branch..[[' ]]
+		command = command..[[--branch "]]..pack.branch..[[" ]]
 	end
-	command = command..[[']]..pack.repo..[[' ']]..pack.install_path..[[']]
+	command = command..[["]]..pack.repo..[[" "]]..pack.install_path..[["]]
 
 	pack.job = io.popen(command, "r")
 end
@@ -108,7 +108,7 @@ end
 
 function PackMan:update()
 	for name, pack in pairs(self.packs) do
-		pack.job = io.popen([[git -C ']]..pack.install_path..[[' pull]], "r")
+		pack.job = io.popen([[git -C "]]..pack.install_path..[[" pull]], "r")
 	end
 end
 
