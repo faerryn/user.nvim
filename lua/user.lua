@@ -20,6 +20,9 @@ local function use(args)
 		pack.init = args.init
 		pack.config = args.config
 
+		pack.install = args.install
+		pack.update = args.update
+
 		if type(args.after) == "string" then
 			pack.after = { args.after }
 		else

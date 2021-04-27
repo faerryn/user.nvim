@@ -1,6 +1,13 @@
 local Deque = require("user.deque").Deque
 local escapist = require("user.escapist")
 
+local function git_head_hash(pack)
+	local handle = io.popen([[git -C "]]..pack.install_path..[[" rev-parse HEAD]], "r")
+	local hash = handle:read("*a")
+	handle:close()
+	return hash
+end
+
 local PackMan = {}
 
 function PackMan:new(args)
@@ -30,6 +37,7 @@ function PackMan:install(pack)
 	command = command..[["]]..pack.repo..[[" "]]..pack.install_path..[["]]
 
 	pack.job = io.popen(command, "r")
+	pack.newly_installed = true
 end
 
 function PackMan:request(pack)
@@ -62,6 +70,16 @@ function PackMan:await_jobs()
 			pack.job:close()
 			vim.api.nvim_command("silent! helptags "..pack.install_path.."/doc")
 			pack.job = nil
+
+			if pack.newly_installed then
+				if pack.install then pack.install() end
+			end
+
+			local hash = git_head_hash(pack)
+			if pack.hash and pack.hash ~= hash then
+				if pack.update then pack.update() end
+				pack.hash = hash
+			end
 		end
 	end
 end
@@ -108,6 +126,7 @@ end
 
 function PackMan:update()
 	for name, pack in pairs(self.packs) do
+		pack.hash = git_head_hash(pack)
 		pack.job = io.popen([[git -C "]]..pack.install_path..[[" pull]], "r")
 	end
 end
