@@ -3,13 +3,13 @@ Since the advent of vim and neovim, countless package managers have appeared and
 
 ## Philosophy
 Configurations should be reproducible and require minimal user effort.
-With `user.nvim`, there is no need to run something like :PlugInstall. Once your config file is written, you are done!
+With `user.nvim`, there is no need to run something like `:PlugInstall`. Once your config file is written, you are done!
 
 **NOTE:** You still need to run `require("user").update()` from time to time. Updates are not necesssary for getting your config up and running, and aren't handled automatically.
 
 ## Requirements
-(Neovim 0.5.0)[https://neovim.io/]
-(Git)[https://git-scm.com/]
+- [Neovim 0.5.0](https://neovim.io/)
+- [Git](https://git-scm.com/)
 
 ## Recommendations
 Neovim 0.5.0 now supports using init.lua, where lua code can be put.
