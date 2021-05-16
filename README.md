@@ -1,3 +1,6 @@
+# Backport to Neovim 0.4.4
+This branch of `user.nvim` works on Neovim 0.4.4, and possibly earlier version. This branch will stop being maintained once Neovim 0.5.0 becomes stable.
+
 # USER.NVIM
 Since the advent of vim and neovim, countless package managers have appeared and dissappeared. Well, here's another one, inspired by Emacs' straight.el and use-package
 
@@ -8,7 +11,7 @@ With `user.nvim`, there is no need to run something like `:PlugInstall`. Once yo
 **NOTE:** You still need to run `require("user").update()` from time to time. Updates are not necesssary for getting your config up and running, and aren't handled automatically.
 
 ## Requirements
-- [Neovim 0.5.0](https://neovim.io/)
+- [Neovim 0.4.4](https://neovim.io/)
 - [Git](https://git-scm.com/)
 
 ## Recommendations
@@ -63,12 +66,12 @@ require("user").clean()
 ```
 
 ## Bootstrap user.nvim
-```lua
-local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/faerryn/user.nvim/default/default"
-if vim.fn.empty(vim.fn.glob(user_install_path)) > 0 then
-	os.execute([[git clone --depth 1 https://github.com/faerryn/user.nvim.git "]]..user_install_path..[["]])
+```vim
+let s:user_install_path = stdpath("data").."/site/pack/user/opt/faerryn/user.nvim/branch/backport-nvim-0.4.4"
+if empty(glob(s:user_install_path))
+	execute "!git clone --depth 1 https://github.com/faerryn/user.nvim.git \""..s:user_install_path.."\""
 end
-vim.api.nvim_command("packadd faerryn/user.nvim/default/default")
+packadd faerryn/user.nvim/branch/backport-nvim-0.4.4
 ```
 
 ## Example
@@ -87,17 +90,6 @@ use {
 		vim.api.nvim_command("colorscheme gruvbox")
 	end,
 }
-
--- gitsigns.nvim requires plenary.nvim, but plenary.nvim's declaration is
-use {
-	"lewis6991/gitsigns.nvim",
-	after = "nvim-lua/plenary.nvim",
-	config = function()
-		require("gitsigns").setup()
-	end,
-}
-
-use "nvim-lua/plenary.nvim"
 
 user.startup()
 ```
