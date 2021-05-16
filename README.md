@@ -67,11 +67,13 @@ require("user").clean()
 
 ## Bootstrap user.nvim
 ```vim
-let s:user_install_path = stdpath("data").."/site/pack/user/opt/faerryn/user.nvim/branch/backport-nvim-0.4.4"
+let s:user_branch = "backport-nvim-0.4.4"
+let s:user_branch_escaped = "backport-snvim-s0.4.4"
+let s:user_install_path = stdpath("data").."/site/pack/user/opt/faerryn/user.nvim/branch/"..s:user_branch_escaped
 if empty(glob(s:user_install_path))
-	execute "!git clone --depth 1 https://github.com/faerryn/user.nvim.git \""..s:user_install_path.."\""
+	silent execute "!git clone --branch \""..s:user_branch.."\" --depth 1 https://github.com/faerryn/user.nvim.git \""..s:user_install_path.."\""
 end
-packadd faerryn/user.nvim/branch/backport-nvim-0.4.4
+execute "packadd faerryn/user.nvim/branch/"..s:user_branch_escaped
 ```
 
 ## Example
@@ -81,7 +83,10 @@ user.setup()
 local use = user.use
 
 -- user.nvim needs to manage itself!
-use "faerryn/user.nvim"
+use {
+	"faerryn/user.nvim",
+	branch = "backport-nvim-0.4.4",
+}
 
 -- Gruvbox is mandatory
 use {
