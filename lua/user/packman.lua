@@ -131,21 +131,4 @@ function PackMan:update()
 	end
 end
 
-function PackMan:clean()
-	local paths = {}
-
-	for path in vim.fn.glob(vim.fn.resolve(self.path.."/opt/*/*/*/*")):gmatch("[^\n]+") do
-		paths[path] = true
-	end
-	for _, pack in pairs(self.packs) do
-		paths[pack.install_path] = false
-	end
-
-	for path, should_remove in pairs(paths) do
-		if should_remove then
-			os.execute("rm -rf "..path)
-		end
-	end
-end
-
 return { PackMan = PackMan }

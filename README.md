@@ -57,11 +57,6 @@ update(): update your packages
 require("user").update()
 ```
 
-clean(): delete unused packages
-```lua
-require("user").clean()
-```
-
 ## Bootstrap user.nvim
 ```lua
 local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/faerryn/user.nvim/default/default"
