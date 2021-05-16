@@ -60,11 +60,6 @@ update(): update your packages
 require("user").update()
 ```
 
-clean(): delete unused packages
-```lua
-require("user").clean()
-```
-
 ## Bootstrap user.nvim
 ```vim
 let s:user_branch = "backport-nvim-0.4.4"

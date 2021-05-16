@@ -52,10 +52,6 @@ local function update()
 	packman:await_jobs()
 end
 
-local function clean()
-	packman:clean()
-end
-
 return {
 	setup = setup,
 	startup = startup,
@@ -63,5 +59,4 @@ return {
 	use = use,
 
 	update = update,
-	clean = clean,
 }
