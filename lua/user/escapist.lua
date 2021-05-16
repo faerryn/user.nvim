@@ -1,15 +1,9 @@
 local function escape(s)
-	s = s:gsub("-", "-s")
-	s = s:gsub("/", "-f")
-	s = s:gsub("\\", "-b")
-	return s
+	return s:gsub("-", "-s"):gsub("/", "-f"):gsub("\\", "-b")
 end
 
 local function unescape(s)
-	s = s:gsub("-b", "\\")
-	s = s:gsub("-f", "/")
-	s = s:gsub("-s", "-")
-	return s
+	return s:gsub("-b", "\\"):gsub("-f", "/"):gsub("-s", "-")
 end
 
 return {
