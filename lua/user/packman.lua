@@ -13,7 +13,7 @@ local PackMan = {}
 function PackMan:new(args)
 	args = args or {}
 	local packman = {
-		path = args.path or vim.fn.resolve(vim.fn.stdpath("data").."/site/pack/user/"),
+		path = args.path or vim.api.nvim_eval([[resolve(stdpath("data").."/site/pack/user/")]]),
 
 		packs = {},
 
@@ -26,7 +26,7 @@ function PackMan:new(args)
 end
 
 function PackMan:install(pack)
-	if vim.fn.empty(vim.fn.glob(pack.install_path)) == 0 then
+	if vim.api.nvim_eval([[empty(glob("]]..pack.install_path..[["))]]) == 0 then
 		return
 	end
 
@@ -56,8 +56,8 @@ function PackMan:request(pack)
 	end
 	local packadd_path = install_path
 	if pack.subdir then packadd_path = packadd_path.."/"..pack.subdir end
-	pack.packadd_path = vim.fn.resolve(packadd_path)
-	pack.install_path = vim.fn.resolve(self.path.."/opt/"..install_path)
+	pack.packadd_path = vim.api.nvim_eval([[resolve("]]..packadd_path..[[")]])
+	pack.install_path = vim.api.nvim_eval([[resolve("]]..self.path.."/opt/"..install_path..[[")]])
 
 	self:install(pack)
 
@@ -88,8 +88,8 @@ function PackMan:config(pack)
 	vim.api.nvim_command("packadd "..pack.packadd_path)
 
 	-- work around vim#1994
-	if vim.v.vim_did_enter > 0 then
-		for after_source in vim.fn.glob(pack.install_path.."/after/plugin/**/*.vim"):gmatch("[^\n]+") do
+	if vim.api.nvim_eval("v:vim_did_enter") > 0 then
+		for after_source in vim.api.nvim_eval([[glob("]]..pack.install_path..[[/after/plugin/**/*.vim")]]):gmatch("[^\n]+") do
 			vim.api.nvim_command("source "..after_source)
 		end
 	end
@@ -134,7 +134,7 @@ end
 function PackMan:clean()
 	local paths = {}
 
-	for path in vim.fn.glob(vim.fn.resolve(self.path.."/opt/*/*/*/*")):gmatch("[^\n]+") do
+	for path in vim.api.nvim_eval([[glob(resolve(self.path.."/opt/*/*/*/*"))]]):gmatch("[^\n]+") do
 		paths[path] = true
 	end
 	for _, pack in pairs(self.packs) do
