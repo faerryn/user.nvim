@@ -29,7 +29,7 @@ local function use(args)
 			pack.after = args.after
 		end
 	else
-		error("user.user -- invalid args")
+		error("user.use -- invalid args")
 	end
 
 	pack.repo = pack.repo or "https://github.com/"..pack.name..".git"
