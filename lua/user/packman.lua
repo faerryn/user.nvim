@@ -1,5 +1,4 @@
 local Deque = require("user.deque").Deque
-local escapist = require("user.escapist")
 
 local function git_head_hash(pack)
 	local handle = io.popen([[git -C "]]..pack.install_path..[[" rev-parse HEAD]], "r")
@@ -50,7 +49,7 @@ function PackMan:request(pack)
 
 	local install_path = pack.name
 	if pack.branch then
-		install_path = install_path.."/branch/"..escapist.escape(pack.branch)
+		install_path = install_path.."/branch/"..pack.branch
 	else
 		install_path = install_path.."/default/default"
 	end
