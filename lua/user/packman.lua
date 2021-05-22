@@ -9,7 +9,7 @@ local PackMan = {}
 function PackMan:new(args)
 	args = args or {}
 	local packman = {
-		path = vim.fn.expand(args.path) or vim.fn.stdpath("data").."/site/pack/user/",
+		path = args.path or vim.fn.stdpath("data").."/site/pack/user/",
 
 		packs = {},
 
