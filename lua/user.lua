@@ -38,7 +38,7 @@ local function use(args)
 end
 
 local function setup(args)
-	if args.path then args.path = vim.fn.expand(args.path) end
+	if args and args.path then args.path = vim.fn.expand(args.path) end
 	packman = require'user.packman'.PackMan:new(args)
 	vim.api.nvim_command([[autocmd VimEnter * ++once lua require("user").startup()]])
 end
