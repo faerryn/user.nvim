@@ -1,10 +1,7 @@
 local Deque = require("user.deque").Deque
 
 local function git_head_hash(pack)
-	local handle = io.popen([[git -C "]]..pack.install_path..[[" rev-parse HEAD]], "r")
-	local hash = handle:read("*a")
-	handle:close()
-	return hash
+	return vim.fn.system([[git -C "]]..pack.install_path..[[" rev-parse HEAD]])
 end
 
 local PackMan = {}
@@ -12,7 +9,7 @@ local PackMan = {}
 function PackMan:new(args)
 	args = args or {}
 	local packman = {
-		path = args.path or vim.api.nvim_eval([[resolve(stdpath("data").."/site/pack/user/")]]),
+		path = args.path or vim.api.nvim_eval([[expand(stdpath("data").."/site/pack/user/")]]),
 
 		packs = {},
 
@@ -25,15 +22,15 @@ function PackMan:new(args)
 end
 
 function PackMan:install(pack)
-	if vim.api.nvim_eval([[empty(glob("]]..pack.install_path..[["))]]) == 0 then
+	if vim.api.nvim_eval([[isdirectory("]]..pack.install_path..[[")]]) > 0 then
 		return
 	end
 
 	local command = "git clone --depth 1 --recurse-submodules "
 	if pack.branch then
-		command = command..[[--branch "]]..pack.branch..[[" ]]
+		command = command.."--branch "..vim.fn.fnameescape(pack.branch).." "
 	end
-	command = command..[["]]..pack.repo..[[" "]]..pack.install_path..[["]]
+	command = command..vim.fn.fnameescape(pack.repo).." "..vim.fn.fnameescape(pack.install_path)
 
 	pack.job = io.popen(command, "r")
 	pack.newly_installed = true
@@ -55,11 +52,10 @@ function PackMan:request(pack)
 	end
 	local packadd_path = install_path
 	if pack.subdir then packadd_path = packadd_path.."/"..pack.subdir end
-	pack.packadd_path = vim.api.nvim_eval([[resolve("]]..packadd_path..[[")]])
-	pack.install_path = vim.api.nvim_eval([[resolve("]]..self.path.."/opt/"..install_path..[[")]])
+	pack.packadd_path = packadd_path
+	pack.install_path = self.path.."/opt/"..install_path
 
 	self:install(pack)
-
 	self.config_queue:push_back(pack)
 end
 
@@ -67,11 +63,11 @@ function PackMan:await_jobs()
 	for _, pack in pairs(self.packs) do
 		if pack.job then
 			pack.job:close()
-			vim.api.nvim_command("silent! helptags "..pack.install_path.."/doc")
+			vim.api.nvim_command("silent! helptags "..vim.fn.fnameescape(pack.install_path).."/doc")
 			pack.job = nil
 
-			if pack.newly_installed then
-				if pack.install then pack.install() end
+			if pack.newly_installed and pack.install then
+				pack.install()
 			end
 
 			local hash = git_head_hash(pack)
@@ -84,12 +80,12 @@ function PackMan:await_jobs()
 end
 
 function PackMan:config(pack)
-	vim.api.nvim_command("packadd "..pack.packadd_path)
+	vim.api.nvim_command("packadd "..vim.fn.fnameescape(pack.packadd_path))
 
 	-- work around vim#1994
 	if vim.api.nvim_eval("v:vim_did_enter") > 0 then
-		for after_source in vim.api.nvim_eval([[glob("]]..pack.install_path..[[/after/plugin/**/*.vim")]]):gmatch("[^\n]+") do
-			vim.api.nvim_command("source "..after_source)
+		for l:after_source in vim.api.nvim_eval([[glob("]]..pack.install_path..[[/after/plugin/**/*.vim")]]):gmatch("[^\n]+") do
+			vim.api.nvim_command("source "..vim.fn.fnameescape(after_source))
 		end
 	end
 
@@ -124,9 +120,9 @@ function PackMan:do_config_queue()
 end
 
 function PackMan:update()
-	for name, pack in pairs(self.packs) do
+	for _, pack in pairs(self.packs) do
 		pack.hash = git_head_hash(pack)
-		pack.job = io.popen([[git -C "]]..pack.install_path..[[" pull]], "r")
+		pack.job = io.popen("git -C "..vim.fn.fnameescape(pack.install_path).." pull", "r")
 	end
 end
 

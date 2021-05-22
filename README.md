@@ -63,8 +63,8 @@ require("user").update()
 ## Bootstrap user.nvim
 ```vim
 let s:user_install_path = stdpath("data").."/site/pack/user/opt/faerryn/user.nvim/branch/backport-nvim-0.4.4"
-if empty(glob(s:user_install_path))
-	silent execute "!git clone --branch backport-nvim-0.4.4 --depth 1 https://github.com/faerryn/user.nvim.git \""..s:user_install_path.."\""
+if !isdirectory(s:user_install_path)
+	call system("git clone --branch backport-nvim-0.4.4 --depth 1 https://github.com/faerryn/user.nvim.git "..fnameescape(s:user_install_path))
 end
 execute "packadd faerryn/user.nvim/branch/backport-nvim-0.4.4"
 ```
