@@ -40,10 +40,9 @@ end
 local function setup(args)
 	if args and args.path then args.path = vim.fn.expand(args.path) end
 	packman = require'user.packman'.PackMan:new(args)
-	vim.api.nvim_command([[autocmd VimEnter * ++once lua require("user").startup()]])
 end
 
-local function startup()
+local function flush()
 	packman:await_jobs()
 	packman:do_config_queue()
 end
@@ -54,10 +53,10 @@ local function update()
 end
 
 return {
+	flush = flush,
 	setup = setup,
-	startup = startup,
-
+	update = update,
 	use = use,
 
-	update = update,
+	startup = flush,
 }
