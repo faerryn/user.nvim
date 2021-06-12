@@ -103,3 +103,5 @@ use {
 	"ziglang/zig.vim",
 	init = function() vim.g.zig_fmt_autosave = false end,
 }
+
+user.flush()

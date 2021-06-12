@@ -52,3 +52,5 @@ use {
     }
   end
 }
+
+user.flush()

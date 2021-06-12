@@ -24,3 +24,5 @@ use {
 		print("nvim.lua")
 	end,
 }
+
+user.flush()

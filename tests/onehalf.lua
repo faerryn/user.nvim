@@ -22,3 +22,5 @@ use {
 		vim.api.nvim_command("colorscheme onehalfdark")
 	end,
 }
+
+user.flush()

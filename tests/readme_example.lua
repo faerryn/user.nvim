@@ -30,3 +30,5 @@ use {
 }
 
 use "nvim-lua/plenary.nvim"
+
+user.flush()

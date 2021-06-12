@@ -16,3 +16,5 @@ use {
 		print("gruvbox")
 	end,
 }
+
+user.flush()
