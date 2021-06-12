@@ -26,7 +26,7 @@ function PackMan:install(pack)
 		return
 	end
 
-	local command = "git clone --depth 1 --recurse-submodules "
+	local command = "git clone --quiet --depth 1 --recurse-submodules "
 	if pack.branch then
 		command = command.."--branch "..vim.fn.fnameescape(pack.branch).." "
 	end
@@ -122,7 +122,7 @@ end
 function PackMan:update()
 	for _, pack in pairs(self.packs) do
 		pack.hash = git_head_hash(pack)
-		pack.job = io.popen("git -C "..vim.fn.fnameescape(pack.install_path).." pull", "r")
+		pack.job = io.popen("git -C "..vim.fn.fnameescape(pack.install_path).." pull --quiet", "r")
 	end
 end
 
