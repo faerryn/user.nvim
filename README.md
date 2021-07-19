@@ -61,7 +61,7 @@ require("user").update()
 ```lua
 local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/faerryn/user.nvim/default/default"
 if vim.fn.isdirectory(user_install_path) == 0 then
-	os.execute([[git clone --quiet --depth 1 https://github.com/faerryn/user.nvim.git "]]..user_install_path..[["]])
+	os.execute("`git clone --quiet --depth 1 https://github.com/faerryn/user.nvim.git "..vim.fn.fnameescape(user_install_path))
 end
 vim.api.nvim_command("packadd faerryn/user.nvim/default/default")
 ```
