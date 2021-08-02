@@ -43,20 +43,24 @@ local function setup(args)
 end
 
 local function flush()
-	packman:await_jobs()
-	packman:do_config_queue()
+  if packman.parallel then
+    packman:await_jobs()
+    packman:do_config_queue()
+  end
 end
 
 local function update()
-	packman:update()
-	packman:await_jobs()
+  packman:update()
+  if packman.parallel then
+    packman:await_jobs()
+  end
 end
 
 return {
-	flush = flush,
-	setup = setup,
-	update = update,
-	use = use,
+  setup = setup,
+  update = update,
+  use = use,
 
-	startup = flush,
+  flush = flush,
+  startup = flush,
 }
