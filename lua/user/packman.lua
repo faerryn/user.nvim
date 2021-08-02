@@ -38,7 +38,7 @@ end
 
 function PackMan:request(pack)
 	if self.packs[pack.name] then
-		error(pack.name.." is requested more than once")
+		return
 	end
 	self.packs[pack.name] = pack
 
