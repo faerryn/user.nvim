@@ -32,9 +32,18 @@ local function use(args)
     error("user.use -- invalid args")
   end
 
-  pack.repo = pack.repo or "https://github.com/"..pack.name..".git"
+  if string.match(pack.name, "^[^/]+/[^/]+$") then
+    pack.repo = pack.repo or "https://github.com/"..pack.name..".git"
 
-  packman:request(pack)
+    packman:request(pack)
+  else
+    local path = vim.fn.fnamemodify(pack.name, ":p")
+    if vim.fn.isdirectory(path) then
+      vim.opt.runtimepath:prepend(path)
+    else
+      error("user.user -- invalid args")
+    end
+  end
 end
 
 local function setup(args)
