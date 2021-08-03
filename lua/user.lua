@@ -1,45 +1,45 @@
 local packman
 
 local function use(args)
-	local pack = {}
+  local pack = {}
 
-	if type(args) == "string" then
-		pack.name = args
-	elseif type(args) == "table" then
-		if args.disabled then
-			return
-		end
+  if type(args) == "string" then
+    pack.name = args
+  elseif type(args) == "table" then
+    if args.disabled then
+      return
+    end
 
-		pack.name = args[1]
+    pack.name = args[1]
 
-		pack.repo = args.repo
-		pack.branch = args.branch
+    pack.repo = args.repo
+    pack.branch = args.branch
 
-		pack.subdir = args.subdir
+    pack.subdir = args.subdir
 
-		pack.init = args.init
-		pack.config = args.config
+    pack.init = args.init
+    pack.config = args.config
 
-		pack.install = args.install
-		pack.update = args.update
+    pack.install = args.install
+    pack.update = args.update
 
-		if type(args.after) == "string" then
-			pack.after = { args.after }
-		else
-			pack.after = args.after
-		end
-	else
-		error("user.use -- invalid args")
-	end
+    if type(args.after) == "string" then
+      pack.after = { args.after }
+    else
+      pack.after = args.after
+    end
+  else
+    error("user.use -- invalid args")
+  end
 
-	pack.repo = pack.repo or "https://github.com/"..pack.name..".git"
+  pack.repo = pack.repo or "https://github.com/"..pack.name..".git"
 
-	packman:request(pack)
+  packman:request(pack)
 end
 
 local function setup(args)
-	if args and args.path then args.path = vim.fn.expand(args.path) end
-	packman = require'user.packman'.PackMan:new(args)
+  if args and args.path then args.path = vim.fn.expand(args.path) end
+  packman = require'user.packman'.PackMan:new(args)
 end
 
 local function flush()

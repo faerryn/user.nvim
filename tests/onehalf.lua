@@ -10,17 +10,17 @@ user.setup({ path = "./pack/user" })
 local use = user.use
 
 use {
-	"sonph/onehalf",
-	subdir = "vim",
-	install = function()
-		print("installed")
-	end,
-	update = function()
-		print("updated")
-	end,
-	config = function()
-		vim.api.nvim_command("colorscheme onehalfdark")
-	end,
+  "sonph/onehalf",
+  subdir = "vim",
+  install = function()
+    print("installed")
+  end,
+  update = function()
+    print("updated")
+  end,
+  config = function()
+    vim.api.nvim_command("colorscheme onehalfdark")
+  end,
 }
 
 user.flush()

@@ -10,11 +10,11 @@ user.setup({ path = "./pack/user" })
 local use = user.use
 
 use {
-	"gruvbox-community/gruvbox",
-	config = function()
-		vim.api.nvim_command("colorscheme gruvbox")
-		print("gruvbox")
-	end,
+  "gruvbox-community/gruvbox",
+  config = function()
+    vim.api.nvim_command("colorscheme gruvbox")
+    print("gruvbox")
+  end,
 }
 
 user.flush()
