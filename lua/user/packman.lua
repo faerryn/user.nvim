@@ -11,7 +11,7 @@ end
 local function packadd(pack)
   vim.api.nvim_command("packadd "..vim.fn.fnameescape(pack.packadd_path))
   -- work around vim#1994
-  if vim.v.vim_did_enter > 0 then
+  if vim.v.vim_did_enter == 1 then
     for after_source in vim.fn.glob(pack.install_path.."/after/plugin/**/*.vim"):gmatch("[^\n]+") do
       vim.api.nvim_command("source "..vim.fn.fnameescape(after_source))
     end
@@ -54,7 +54,7 @@ function PackMan:new(args)
 end
 
 function PackMan:install(pack)
-  if vim.fn.isdirectory(pack.install_path) > 0 then
+  if vim.fn.isdirectory(pack.install_path) == 1 then
     return
   end
 
@@ -133,7 +133,7 @@ end
 function PackMan:do_config_queue()
   local counter = 0
 
-  while (self.config_queue:len() > 0) and (counter < self.config_queue:len())  do
+  while (self.config_queue:len() == 1) and (counter < self.config_queue:len())  do
     local pack = self.config_queue:pop_front()
 
     if self:can_config(pack) then
