@@ -13,7 +13,7 @@ use {
   "sonph/onehalf",
   subdir = "vim",
   install = function()
-    print("installed")
+    print(vim.loop.cwd())
   end,
   update = function()
     print("updated")

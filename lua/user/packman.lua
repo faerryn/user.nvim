@@ -18,10 +18,19 @@ local function packadd(pack)
   end
 end
 
+local function chdir_do_fun(dir, fun)
+  local cwd = vim.loop.cwd()
+  vim.loop.chdir(dir)
+  pcall(fun)
+  vim.loop.chdir(cwd)
+end
+
 local function run_install_hook(pack)
   if pack.newly_installed then
     gen_helptags(pack)
-    if pack.install then pack.install() end
+    if pack.install then
+      chdir_do_fun(pack.install_path, pack.install)
+    end
   end
 end
 
@@ -29,7 +38,9 @@ local function run_update_hook(pack)
   local hash = git_head_hash(pack)
   if pack.hash and pack.hash ~= hash then
     gen_helptags(pack)
-    if pack.update then pack.update() end
+    if pack.update then
+      chdir_do_fun(pack.install_path, pack.update)
+    end
     pack.hash = hash
   end
 end
