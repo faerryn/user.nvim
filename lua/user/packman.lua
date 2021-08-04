@@ -50,7 +50,7 @@ local PackMan = {}
 function PackMan:new(args)
   args = args or {}
   local packman = {
-    path = vim.fn.resolve(vim.fn.fnamemodify(args.path, ":p")) or vim.fn.stdpath("data").."/site/pack/user/",
+    path = (args.path and vim.fn.resolve(vim.fn.fnamemodify(args.path, ":p"))) or vim.fn.stdpath("data").."/site/pack/user/",
 
     packs = {},
 
