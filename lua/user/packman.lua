@@ -1,7 +1,7 @@
 local Deque = require("user.deque").Deque
 
 local function gen_helptags(pack)
-  vim.api.nvim_command("silent! helptags "..vim.fn.fnameescape(pack.install_path).."/doc")
+  vim.api.nvim_command("silent! helptags "..vim.fn.shellescape(pack.install_path).."/doc")
 end
 
 local function git_head_hash(pack)
@@ -9,11 +9,11 @@ local function git_head_hash(pack)
 end
 
 local function packadd(pack)
-  vim.api.nvim_command("packadd "..vim.fn.fnameescape(pack.packadd_path))
+  vim.api.nvim_command("packadd "..vim.fn.shellescape(pack.packadd_path))
   -- work around vim#1994
   if vim.v.vim_did_enter == 1 then
     for after_source in vim.fn.glob(pack.install_path.."/after/plugin/**/*.vim"):gmatch("[^\n]+") do
-      vim.api.nvim_command("source "..vim.fn.fnameescape(after_source))
+      vim.api.nvim_command("source "..vim.fn.shellescape(after_source))
     end
   end
 end
@@ -50,7 +50,7 @@ local PackMan = {}
 function PackMan:new(args)
   args = args or {}
   local packman = {
-    path = args.path or vim.fn.stdpath("data").."/site/pack/user/",
+    path = vim.fn.resolve(vim.fn.fnamemodify(args.path, ":p")) or vim.fn.stdpath("data").."/site/pack/user/",
 
     packs = {},
 
@@ -71,9 +71,9 @@ function PackMan:install(pack)
 
   local command = "git clone --quiet --depth 1 --recurse-submodules "
   if pack.branch then
-    command = command.."--branch "..vim.fn.fnameescape(pack.branch).." "
+    command = command.."--branch "..vim.fn.shellescape(pack.branch).." "
   end
-  command = command..vim.fn.fnameescape(pack.repo).." "..vim.fn.fnameescape(pack.install_path)
+  command = command..vim.fn.shellescape(pack.repo).." "..vim.fn.shellescape(pack.install_path)
 
   if self.parallel then
     pack.job = io.popen(command, "r")
@@ -85,7 +85,7 @@ end
 
 function PackMan:request(pack)
   if self.packs[pack.name] then
-    return
+    return self.packs[pack.name]
   end
   self.packs[pack.name] = pack
 
@@ -110,6 +110,8 @@ function PackMan:request(pack)
     packadd(pack)
     if pack.config then pack.config() end
   end
+
+  return pack
 end
 
 function PackMan:await_jobs()
@@ -160,7 +162,7 @@ end
 function PackMan:update()
   for _, pack in pairs(self.packs) do
     pack.hash = git_head_hash(pack)
-    local command = "git -C "..vim.fn.fnameescape(pack.install_path).." pull --quiet"
+    local command = "git -C "..vim.fn.shellescape(pack.install_path).." pull --quiet"
     if self.parallel then
       pack.job = io.popen(command, "r")
     else
