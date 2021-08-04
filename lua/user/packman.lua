@@ -95,7 +95,7 @@ function PackMan:request(pack)
   if pack.branch then
     install_path = install_path.."/branch/"..pack.branch
   else
-    install_path = install_path.."/default/default"
+    install_path = install_path.."/default"
   end
   local packadd_path = install_path
   if pack.subdir then packadd_path = packadd_path.."/"..pack.subdir end
