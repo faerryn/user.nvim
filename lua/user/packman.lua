@@ -1,7 +1,7 @@
 local Deque = require("user.deque").Deque
 
 local function gen_helptags(pack)
-  vim.api.nvim_command("silent! helptags "..vim.fn.shellescape(pack.install_path).."/doc")
+  vim.api.nvim_command("silent! helptags "..vim.fn.fnameescape(pack.install_path).."/doc")
 end
 
 local function git_head_hash(pack)
@@ -9,11 +9,11 @@ local function git_head_hash(pack)
 end
 
 local function packadd(pack)
-  vim.api.nvim_command("packadd "..vim.fn.shellescape(pack.packadd_path))
+  vim.api.nvim_command("packadd "..vim.fn.fnameescape(pack.packadd_path))
   -- work around vim#1994
   if vim.v.vim_did_enter == 1 then
     for after_source in vim.fn.glob(pack.install_path.."/after/plugin/**/*.vim"):gmatch("[^\n]+") do
-      vim.api.nvim_command("source "..vim.fn.shellescape(after_source))
+      vim.api.nvim_command("source "..vim.fn.fnameescape(after_source))
     end
   end
 end
