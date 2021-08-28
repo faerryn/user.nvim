@@ -1,5 +1,10 @@
 local packman
 
+--[[
+-- This is the fontend to packman.use()
+-- It fills out all the arguments and figures out if the user is just
+-- requesting an runtimepath edit.
+--]]
 local function use(args)
   local pack = {}
 
@@ -50,11 +55,20 @@ local function use(args)
   return pack
 end
 
+--[[
+-- instantiate everything
+--]]
 local function setup(args)
-  if args and args.path then args.path = vim.fn.expand(args.path) end
-  packman = require'user.packman'.PackMan:new(args)
+  if args and args.path then
+    args.path = vim.fn.expand(args.path)
+  end
+  packman = require("user.packman").PackMan:new(args)
 end
 
+--[[
+-- flush parallel git clone jobs
+-- does nothing if parallel jobs are not enabled
+--]]
 local function flush()
   if packman.parallel then
     packman:await_jobs()
@@ -62,6 +76,10 @@ local function flush()
   end
 end
 
+--[[
+-- updates packages
+-- awaits parallel git pull jobs if enabled
+--]]
 local function update()
   packman:update()
   if packman.parallel then
