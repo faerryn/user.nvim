@@ -24,7 +24,7 @@ EOF
 ```
 
 ## Usage
-setup(): Mandatory to make the lua work:
+`setup()`: Must be called before any `use()` calls:
 ```lua
 local user = require("user")
 user.setup()
@@ -39,7 +39,7 @@ local use = user.user
 ```
 Note that you still have to wait for the operations to complete.
 
-`use {...}`: Install a package from github or other git repositories.
+`use()`: Install a package from github or other git repositories.
 ```lua
 use {
 	"package_author/package_name",
