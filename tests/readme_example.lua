@@ -21,9 +21,9 @@ use {
 }
 
 -- gitsigns.nvim requires plenary.nvim, but plenary.nvim's declaration is 
+use "nvim-lua/plenary.nvim"
 use {
   "lewis6991/gitsigns.nvim",
-  after = "nvim-lua/plenary.nvim",
   config = function()
     require("gitsigns").setup()
   end,

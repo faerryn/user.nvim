@@ -56,8 +56,7 @@ function PackMan:new(args)
 
     packs = {},
 
-    config_queue = Deque:new(),
-    config_done = {},
+    packadd_queue = Deque:new(),
 
     parallel = args.parallel or false,
   }
@@ -92,6 +91,22 @@ function PackMan:install(pack)
   end
 end
 
+function PackMan:update(pack)
+  if not pack.pin then
+    pack.hash = git_head_hash(pack)
+
+    local escaped_install_path = vim.fn.shellescape(pack.install_path)
+    local command = "git -C "..escaped_install_path.." pull --quiet"
+
+    if self.parallel then
+      pack.update_job = io.popen(command, "r")
+    else
+      os.execute(command)
+      post_update(pack)
+    end
+  end
+end
+
 function PackMan:request(pack)
   if self.packs[pack.name] then
     return self.packs[pack.name]
@@ -120,7 +135,7 @@ function PackMan:request(pack)
 
   self:install(pack)
   if self.parallel then
-    self.config_queue:push_back(pack)
+    self.packadd_queue:push_back(pack)
   else
     post_install(pack)
     packadd(pack)
@@ -130,7 +145,7 @@ function PackMan:request(pack)
   return pack
 end
 
-function PackMan:await_jobs()
+function PackMan:flush_jobs()
   for _, pack in pairs(self.packs) do
     if pack.install_job then
       pack.install_job:close()
@@ -145,54 +160,17 @@ function PackMan:await_jobs()
   end
 end
 
-function PackMan:config(pack)
-  packadd(pack)
-
-  if pack.config then pack.config() end
-
-  self.config_done[pack.name] = true
-end
-
-function PackMan:can_config(pack)
-  if pack.after then
-    for _, after in ipairs(pack.after) do
-      if not self.config_done[after] then return false end
-    end
-  end
-  return true
-end
-
-function PackMan:do_config_queue()
-  local counter = 0
-
-  while (self.config_queue:len() == 1) and (counter < self.config_queue:len())  do
-    local pack = self.config_queue:pop_front()
-
-    if self:can_config(pack) then
-      self:config(pack)
-      counter = 0
-    else
-      self.config_queue:push_back(pack)
-      counter = counter + 1
-    end
+function PackMan:flush_packadd_queue()
+  while self.packadd_queue:len() > 0 do
+    local pack = self.packadd_queue:pop_front()
+    packadd(pack)
+    if pack.config then pack.config() end
   end
 end
 
-function PackMan:update()
+function PackMan:update_all()
   for _, pack in pairs(self.packs) do
-    if not pack.pin then
-      pack.hash = git_head_hash(pack)
-
-      local escaped_install_path = vim.fn.shellescape(pack.install_path)
-      local command = "git -C "..escaped_install_path.." pull --quiet"
-
-      if self.parallel then
-        pack.update_job = io.popen(command, "r")
-      else
-        os.execute(command)
-        post_update(pack)
-      end
-    end
+    update(pack)
   end
 end
 

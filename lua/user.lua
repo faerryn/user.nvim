@@ -29,11 +29,7 @@ local function use(args)
     pack.install = args.install
     pack.update = args.update
 
-    if type(args.after) == "string" then
-      pack.after = { args.after }
-    else
-      pack.after = args.after
-    end
+    pack.after = args.after
   else
     error("user.use -- invalid args")
   end
@@ -74,8 +70,8 @@ end
 --]]
 local function flush()
   if packman.parallel then
-    packman:await_jobs()
-    packman:do_config_queue()
+    packman:flush_jobs()
+    packman:flush_packadd_queue()
   end
 end
 
@@ -84,9 +80,9 @@ end
 -- awaits parallel git pull jobs if enabled
 --]]
 local function update()
-  packman:update()
+  packman:update_all()
   if packman.parallel then
-    packman:await_jobs()
+    packman:flush_jobs()
   end
 end
 

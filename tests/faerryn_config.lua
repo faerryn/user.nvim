@@ -28,11 +28,6 @@ use "nvim-lua/popup.nvim"
 use "nvim-telescope/telescope-fzy-native.nvim"
 use {
   "nvim-telescope/telescope.nvim",
-  after = {
-    "nvim-lua/plenary.nvim",
-    "nvim-lua/popup.nvim",
-    "nvim-telescope/telescope-fzy-native.nvim",
-  },
   config = function()
     local telescope = require("telescope")
     local actions = require("telescope.actions")
@@ -49,9 +44,9 @@ use {
   end,
 }
 
+use "nvim-lua/plenary.nvim"
 use {
   "lewis6991/gitsigns.nvim",
-  after = "nvim-lua/plenary.nvim",
   config = function()
     require("gitsigns").setup {
       signs = {
