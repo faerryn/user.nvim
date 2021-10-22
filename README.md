@@ -42,16 +42,17 @@ Note that you still have to wait for the operations to complete.
 `use()`: Install a package from github or other git repositories.
 ```lua
 use {
-	"package_author/package_name",
-	repo = nil, -- if non-nil, then clone from this repo instead
-	branch = nil, -- if non-nil, then clone from this branch instead of default branch
-	subdir = nil, -- if non-nil, then will add that subdirectory to rtp
-	init = function()
-		-- will run immediately unless disabled = true.
-	end,
-	config = function()
-		-- will run after the package is loaded. not very useful if you don't have `parallel` enabled.
-	end,
+        "package_author/package_name",
+        repo = nil, -- if non-nil, then clone from this repo instead
+        branch = nil, -- if non-nil, then clone from this branch instead of default branch
+        pin = nil, -- if non-nil, then checkout this commit instead of HEAD
+        subdir = nil, -- if non-nil, then will add that subdirectory to rtp
+        init = function()
+                -- will run immediately unless disabled = true.
+        end,
+        config = function()
+                -- will run after the package is loaded. not very useful if you don't have `parallel` enabled.
+        end,
 }
 ```
 
