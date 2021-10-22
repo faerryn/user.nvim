@@ -79,25 +79,32 @@ vim.api.nvim_command("packadd "..vim.fn.fnameescape(user_packadd_path))
 ## Example
 ```lua
 local user = require("user")
-user.setup()
+user.setup({ parallel = true })
 local use = user.use
 
 -- user.nvim can manage itself!
 use "faerryn/user.nvim"
 
 -- Gruvbox is mandatory
-use "gruvbox-community/gruvbox"
-vim.api.nvim_command("colorscheme gruvbox")
+use {
+        "gruvbox-community/gruvbox",
+        config = function() vim.api.nvim_command("colorscheme gruvbox") end,
+}
 
 -- Gitsigns are fun
 use "nvim-lua/plenary.nvim"
-use "lewis6991/gitsigns.nvim"
-require("gitsigns").setup()
+use {
+        "lewis6991/gitsigns.nvim",
+        config = function() require("gitsigns").setup() end,
+}
 
 -- Repeated packages will be ignored
 use "nvim-lua/plenary.nvim"
 use "nvim-lua/plenary.nvim"
 use "nvim-lua/plenary.nvim"
+
+-- since we are using parallel, we *must* call user.flush()
+user.flush()
 ```
 
 # News and FAQ
