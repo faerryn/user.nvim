@@ -33,11 +33,13 @@ local use = user.user
 
 If you want to enable parallel git operations:
 ```lua
+local user = require("user")
 user.setup({ parallel = true })
+local use = user.user
 ```
 Note that you still have to wait for the operations to complete.
 
-use {...}: Install a package from github or other git repositories.
+`use {...}`: Install a package from github or other git repositories.
 ```lua
 use {
 	"package_author/package_name",
@@ -53,13 +55,13 @@ use {
 }
 ```
 
-flush(): If `parallel` is enabled, then this will wait until all git operations are done and run your `config()`s.
+`flush()`: If `parallel` is enabled, then this will wait until all git operations are done and run your `config()`s.
 Put this at the end of your configuration.
 ```lua
 user.flush()
 ```
 
-update(): update your packages
+`update()`: update your packages
 ```lua
 require("user").update()
 ```
