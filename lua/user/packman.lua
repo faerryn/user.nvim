@@ -170,7 +170,7 @@ end
 
 function PackMan:update_all()
   for _, pack in pairs(self.packs) do
-    update(pack)
+    self:update(pack)
   end
 end
 
