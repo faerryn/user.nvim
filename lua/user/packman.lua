@@ -70,7 +70,7 @@ function PackMan:install(pack)
     return
   end
 
-  local command = "git clone --quiet --recurse-submodules "
+  local command = "git clone --quiet --recurse-submodules --shallow-submodules "
 
   if not pack.pin then
     command = command.."--depth 1 "
@@ -96,7 +96,7 @@ function PackMan:update(pack)
     pack.hash = git_head_hash(pack)
 
     local escaped_install_path = vim.fn.shellescape(pack.install_path)
-    local command = "git -C "..escaped_install_path.." pull --quiet"
+    local command = "git -C "..escaped_install_path.." pull --quiet --recurse-submodules --update-shallow"
 
     if self.parallel then
       pack.update_job = io.popen(command, "r")
