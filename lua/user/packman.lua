@@ -25,16 +25,18 @@ local function chdir_do_fun(dir, fun)
   vim.loop.chdir(cwd)
 end
 
-local function run_install_hook(pack)
-  if pack.newly_installed then
-    gen_helptags(pack)
-    if pack.install then
-      chdir_do_fun(pack.install_path, pack.install)
-    end
+local function post_install(pack)
+  if pack.pin then
+    local escaped_install_path = vim.fn.shellescape(pack.install_path)
+    os.execute("git -C "..escaped_install_path.." checkout --quiet "..pack.pin)
+  end
+  gen_helptags(pack)
+  if pack.install then
+    chdir_do_fun(pack.install_path, pack.install)
   end
 end
 
-local function run_update_hook(pack)
+local function post_update(pack)
   local hash = git_head_hash(pack)
   if pack.hash and pack.hash ~= hash then
     gen_helptags(pack)
@@ -69,18 +71,25 @@ function PackMan:install(pack)
     return
   end
 
-  local command = "git clone --quiet --depth 1 --recurse-submodules "
+  local command = "git clone --quiet --recurse-submodules "
+
+  if not pack.pin then
+    command = command.."--depth 1 "
+  end
+
   if pack.branch then
     command = command.."--branch "..vim.fn.shellescape(pack.branch).." "
   end
-  command = command..vim.fn.shellescape(pack.repo).." "..vim.fn.shellescape(pack.install_path)
+
+  local escaped_install_path = vim.fn.shellescape(pack.install_path)
+  command = command..vim.fn.shellescape(pack.repo).." "..escaped_install_path
 
   if self.parallel then
-    pack.job = io.popen(command, "r")
+    pack.install_job = io.popen(command, "r")
   else
     os.execute(command)
+    post_install(pack)
   end
-  pack.newly_installed = true
 end
 
 function PackMan:request(pack)
@@ -95,10 +104,17 @@ function PackMan:request(pack)
   if pack.branch then
     install_path = install_path.."/branch/"..pack.branch
   else
-    install_path = install_path.."/default"
+    install_path = install_path.."/default/default"
   end
+  if pack.pin then
+    install_path = install_path.."/commit/"..pack.pin
+  else
+    install_path = install_path.."/default/default"
+  end
+
   local packadd_path = install_path
   if pack.subdir then packadd_path = packadd_path.."/"..pack.subdir end
+
   pack.packadd_path = packadd_path
   pack.install_path = self.path.."/opt/"..install_path
 
@@ -106,7 +122,7 @@ function PackMan:request(pack)
   if self.parallel then
     self.config_queue:push_back(pack)
   else
-    run_install_hook(pack)
+    post_install(pack)
     packadd(pack)
     if pack.config then pack.config() end
   end
@@ -116,12 +132,15 @@ end
 
 function PackMan:await_jobs()
   for _, pack in pairs(self.packs) do
-    if pack.job then
-      pack.job:close()
-      pack.job = nil
-
-      run_install_hook(pack)
-      run_update_hook(pack)
+    if pack.install_job then
+      pack.install_job:close()
+      pack.install_job = nil
+      post_install(pack)
+    end
+    if pack.update_job then
+      pack.update_job:close()
+      pack.update_job = nil
+      post_update(pack)
     end
   end
 end
@@ -161,13 +180,18 @@ end
 
 function PackMan:update()
   for _, pack in pairs(self.packs) do
-    pack.hash = git_head_hash(pack)
-    local command = "git -C "..vim.fn.shellescape(pack.install_path).." pull --quiet"
-    if self.parallel then
-      pack.job = io.popen(command, "r")
-    else
-      os.execute(command)
-      run_update_hook(pack)
+    if not pack.pin then
+      pack.hash = git_head_hash(pack)
+
+      local escaped_install_path = vim.fn.shellescape(pack.install_path)
+      local command = "git -C "..escaped_install_path.." pull --quiet"
+
+      if self.parallel then
+        pack.update_job = io.popen(command, "r")
+      else
+        os.execute(command)
+        post_update(pack)
+      end
     end
   end
 end

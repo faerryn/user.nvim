@@ -19,6 +19,7 @@ local function use(args)
 
     pack.repo = args.repo
     pack.branch = args.branch
+    pack.pin = args.pin
 
     pack.subdir = args.subdir
 
@@ -41,11 +42,13 @@ local function use(args)
     return packman.packs[pack.name]
   end
 
+  -- we have a repo that can be managed by packman
   if pack.repo or string.match(pack.name, "^[^/]+/[^/]+$") then
     pack.repo = pack.repo or "https://github.com/"..pack.name..".git"
     return packman:request(pack)
   end
 
+  -- we can install local directories too!
   local path = vim.fn.fnamemodify(pack.name, ":p")
   if vim.fn.isdirectory(path) then
     vim.opt.runtimepath:prepend(path)
