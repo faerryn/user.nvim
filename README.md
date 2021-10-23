@@ -29,6 +29,9 @@ EOF
 local user = require("user")
 user.setup()
 local use = user.user
+
+
+user.flush()
 ```
 
 If you want to enable parallel git operations:
