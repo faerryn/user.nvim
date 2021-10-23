@@ -28,7 +28,7 @@ EOF
 ```lua
 local user = require("user")
 user.setup()
-local use = user.user
+local use = user.use
 
 
 user.flush()
@@ -38,7 +38,7 @@ If you want to enable parallel git operations:
 ```lua
 local user = require("user")
 user.setup({ parallel = true })
-local use = user.user
+local use = user.use
 ```
 Note that you still have to wait for the operations to complete.
 
