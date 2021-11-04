@@ -29,9 +29,6 @@ EOF
 local user = require("user")
 user.setup()
 local use = user.use
-
-
-user.flush()
 ```
 
 If you want to enable parallel git operations:
@@ -39,6 +36,9 @@ If you want to enable parallel git operations:
 local user = require("user")
 user.setup({ parallel = true })
 local use = user.use
+
+
+user.flush() -- at the bottome of your config
 ```
 Note that you still have to wait for the operations to complete.
 
