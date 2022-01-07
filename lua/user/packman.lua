@@ -86,7 +86,10 @@ function PackMan:install(pack)
   if self.parallel then
     pack.install_job = io.popen(command, "r")
   else
-    os.execute(command)
+    local error = os.execute(command)
+    while error ~= 0 do
+        error = os.execute(command)
+    end
     post_install(pack)
   end
 end
