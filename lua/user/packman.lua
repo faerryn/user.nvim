@@ -137,7 +137,6 @@ function PackMan:request(pack)
   if self.parallel then
     self.packadd_queue:push_back(pack)
   else
-    post_install(pack)
     packadd(pack)
     if pack.config then pack.config() end
   end
