@@ -10,12 +10,44 @@ Once your config file is written, you are done!
 **NOTE:** You still need to run `require("user").update()` from time to time.
 
 ## Requirements
-- [Neovim 0.5.0](https://neovim.io/)
+- [Neovim >= 0.5.0](https://neovim.io/)
 - [Git](https://git-scm.com/)
 
-## Recommendations
-Neovim 0.5.0 now supports using init.lua, where lua code can be put.
-If you have a init.vim or .vimrc, you can put your lua code in a heredoc block:
+## Example
+`~/.config/nvim/init.lua`:
+
+```lua
+local user = require("user")
+user.setup({ parallel = true })
+local use = user.use
+
+-- user.nvim can manage itself!
+use "faerryn/user.nvim"
+
+-- Gruvbox is mandatory
+use {
+        "gruvbox-community/gruvbox",
+        config = function() vim.api.nvim_command("colorscheme gruvbox") end,
+}
+
+-- Gitsigns are fun
+use "nvim-lua/plenary.nvim"
+use {
+        "lewis6991/gitsigns.nvim",
+        config = function() require("gitsigns").setup() end,
+}
+
+-- Repeated packages will be ignored
+use "nvim-lua/plenary.nvim"
+use "nvim-lua/plenary.nvim"
+use "nvim-lua/plenary.nvim"
+
+-- since we are using parallel, we *must* call user.flush()
+user.flush()
+```
+
+## Heredoc
+If you have a `init.vim` or `.vimrc`, you can put your lua code in a heredoc block:
 
 ```
 lua << EOF
@@ -78,37 +110,6 @@ if vim.fn.isdirectory(user_install_path) == 0 then
   os.execute("git clone --quiet --depth 1 https://github.com/faerryn/user.nvim.git "..vim.fn.shellescape(user_install_path))
 end
 vim.api.nvim_command("packadd "..vim.fn.fnameescape(user_packadd_path))
-```
-
-## Example
-```lua
-local user = require("user")
-user.setup({ parallel = true })
-local use = user.use
-
--- user.nvim can manage itself!
-use "faerryn/user.nvim"
-
--- Gruvbox is mandatory
-use {
-        "gruvbox-community/gruvbox",
-        config = function() vim.api.nvim_command("colorscheme gruvbox") end,
-}
-
--- Gitsigns are fun
-use "nvim-lua/plenary.nvim"
-use {
-        "lewis6991/gitsigns.nvim",
-        config = function() require("gitsigns").setup() end,
-}
-
--- Repeated packages will be ignored
-use "nvim-lua/plenary.nvim"
-use "nvim-lua/plenary.nvim"
-use "nvim-lua/plenary.nvim"
-
--- since we are using parallel, we *must* call user.flush()
-user.flush()
 ```
 
 # News and FAQ
