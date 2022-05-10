@@ -112,7 +112,7 @@ function PackMan:update(pack)
         }
 
         if self.parallel then
-            pack.update_job = vim.fn.jobstart(command, "r")
+            pack.update_job = vim.fn.jobstart(command)
         else
             vim.fn.system(command)
             post_update(pack)
