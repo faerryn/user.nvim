@@ -5,7 +5,7 @@ local function gen_helptags(pack)
 end
 
 local function git_head_hash(pack)
-    return vim.fn.system(("git -C %s rev-parse HEAD"):format(vim.fn.shellescape(pack.install_path)))
+    return vim.fn.system { "git", "-C", pack.install_path, "rev-parse", "HEAD" }
 end
 
 local function packadd(pack)
@@ -25,10 +25,19 @@ local function chdir_do_fun(dir, fun)
     vim.loop.chdir(cwd)
 end
 
+local function join_lists(lists)
+    local result = {}
+    for _, list in ipairs(lists) do
+        for _, elem in ipairs(list) do
+            table.insert(result, elem)
+        end
+    end
+    return result
+end
+
 local function post_install(pack)
     if pack.pin then
-        local escaped_install_path = vim.fn.shellescape(pack.install_path)
-        os.execute(("git -C %s checkout --quiet %s"):format(escaped_install_path, pack.pin))
+        vim.fn.system { "git", "-C", pack.install_path, "checkout", "--quiet", pack.pin }
     end
     gen_helptags(pack)
     if pack.install then
@@ -71,17 +80,19 @@ function PackMan:install(pack)
         return
     end
 
-    local command = ("git clone --quiet --recurse-submodules --shallow-submodules %s %s %s %s"):format(
-        (pack.pin and "" or "--depth 1"),
-        (pack.branch and "--branch " .. vim.fn.shellescape(pack.branch) or ""),
-        vim.fn.shellescape(pack.repo),
-        vim.fn.shellescape(pack.install_path)
-    )
+    local command = { "git", "clone", "--quiet", "--recurse-submodules", "--shallow-submodules" }
+    if pack.pin then
+        command = join_lists { command, { "--depth", "1" } }
+    end
+    if pack.branch then
+        command = join_lists { command, { "--branch", pack.branch } }
+    end
+    command = join_lists { command, { pack.repo, pack.install_path } }
 
     if self.parallel then
-        pack.install_job = io.popen(command, "r")
+        pack.install_job = vim.fn.jobstart(command)
     else
-        os.execute(command)
+        vim.fn.system(command)
         post_install(pack)
     end
 end
@@ -90,13 +101,20 @@ function PackMan:update(pack)
     if not pack.pin then
         pack.hash = git_head_hash(pack)
 
-        local escaped_install_path = vim.fn.shellescape(pack.install_path)
-        local command = ("git -C %s pull --quiet --recurse-submodules --update-shallow"):format(escaped_install_path)
+        local command = {
+            "git",
+            "-C",
+            pack.install_path,
+            "pull",
+            "--quiet",
+            "--recurse-submodules",
+            "--update-shallow",
+        }
 
         if self.parallel then
-            pack.update_job = io.popen(command, "r")
+            pack.update_job = vim.fn.jobstart(command, "r")
         else
-            os.execute(command)
+            vim.fn.system(command)
             post_update(pack)
         end
     end
@@ -142,12 +160,12 @@ end
 function PackMan:flush_jobs()
     for _, pack in pairs(self.packs) do
         if pack.install_job then
-            pack.install_job:close()
+            vim.fn.jobwait { pack.install_job }
             pack.install_job = nil
             post_install(pack)
         end
         if pack.update_job then
-            pack.update_job:close()
+            vim.fn.jobwait { pack.update_job }
             pack.update_job = nil
             post_update(pack)
         end
