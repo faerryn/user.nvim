@@ -18,14 +18,16 @@ Once your config file is written, you are done!
 
 ```lua
 local user_packadd_path = "faerryn_user.nvim/default/default/default/default"
-local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/"..user_packadd_path
+local user_install_path = vim.fn.stdpath "data" .. "/site/pack/user/opt/" .. user_packadd_path
 if vim.fn.isdirectory(user_install_path) == 0 then
-  os.execute("git clone --quiet --depth 1 https://github.com/faerryn/user.nvim.git "..vim.fn.shellescape(user_install_path))
+    os.execute(
+        "git clone --quiet --depth 1 https://github.com/faerryn/user.nvim.git " .. vim.fn.shellescape(user_install_path)
+    )
 end
-vim.api.nvim_command("packadd "..vim.fn.fnameescape(user_packadd_path))
+vim.api.nvim_command("packadd " .. vim.fn.fnameescape(user_packadd_path))
 
-local user = require("user")
-user.setup({ parallel = true })
+local user = require "user"
+user.setup { parallel = true }
 local use = user.use
 
 -- user.nvim can manage itself!
@@ -33,15 +35,19 @@ use "faerryn/user.nvim"
 
 -- Gruvbox is mandatory
 use {
-        "gruvbox-community/gruvbox",
-        config = function() vim.api.nvim_command("colorscheme gruvbox") end,
+    "gruvbox-community/gruvbox",
+    config = function()
+        vim.api.nvim_command "colorscheme gruvbox"
+    end,
 }
 
 -- Gitsigns are fun
 use "nvim-lua/plenary.nvim"
 use {
-        "lewis6991/gitsigns.nvim",
-        config = function() require("gitsigns").setup() end,
+    "lewis6991/gitsigns.nvim",
+    config = function()
+        require("gitsigns").setup()
+    end,
 }
 
 -- Repeated packages will be ignored
@@ -65,17 +71,16 @@ EOF
 ## Usage
 `setup()`: Must be called before any `use()` calls:
 ```lua
-local user = require("user")
+local user = require "user"
 user.setup()
 local use = user.use
 ```
 
 If you want to enable parallel git operations:
 ```lua
-local user = require("user")
-user.setup({ parallel = true })
+local user = require "user"
+user.setup { parallel = true }
 local use = user.use
-
 
 user.flush() -- at the bottome of your config
 ```
@@ -84,17 +89,17 @@ Note that you still have to wait for the operations to complete.
 `use()`: Install a package from github or other git repositories.
 ```lua
 use {
-        "package_author/package_name",
-        repo = nil, -- if non-nil, then clone from this repo instead
-        branch = nil, -- if non-nil, then clone from this branch instead of default branch
-        pin = nil, -- if non-nil, then checkout this commit instead of HEAD
-        subdir = nil, -- if non-nil, then will add that subdirectory to rtp
-        init = function()
-                -- will run immediately unless disabled = true.
-        end,
-        config = function()
-                -- will run after the package is loaded. not very useful if you don't have `parallel` enabled.
-        end,
+    "package_author/package_name",
+    repo = nil, -- if non-nil, then clone from this repo instead
+    branch = nil, -- if non-nil, then clone from this branch instead of default branch
+    pin = nil, -- if non-nil, then checkout this commit instead of HEAD
+    subdir = nil, -- if non-nil, then will add that subdirectory to rtp
+    init = function()
+        -- will run immediately unless disabled = true.
+    end,
+    config = function()
+        -- will run after the package is loaded. not very useful if you don't have `parallel` enabled.
+    end,
 }
 ```
 
@@ -107,16 +112,6 @@ user.flush()
 `update()`: update your packages
 ```lua
 require("user").update()
-```
-
-## Bootstrap user.nvim
-```lua
-local user_packadd_path = "faerryn/user.nvim/default/default/default/default"
-local user_install_path = vim.fn.stdpath("data").."/site/pack/user/opt/"..user_packadd_path
-if vim.fn.isdirectory(user_install_path) == 0 then
-  os.execute("git clone --quiet --depth 1 https://github.com/faerryn/user.nvim.git "..vim.fn.shellescape(user_install_path))
-end
-vim.api.nvim_command("packadd "..vim.fn.fnameescape(user_packadd_path))
 ```
 
 # News and FAQ
