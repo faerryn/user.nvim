@@ -1,19 +1,19 @@
 local Deque = require("user.deque").Deque
 
 local function gen_helptags(pack)
-    vim.api.nvim_command("silent! helptags " .. vim.fn.fnameescape(pack.install_path) .. "/doc")
+    vim.cmd(("silent! helptags %s/doc"):format(vim.fn.fnameescape(pack.install_path)))
 end
 
 local function git_head_hash(pack)
-    return vim.fn.system([[git -C "]] .. pack.install_path .. [[" rev-parse HEAD]])
+    return vim.fn.system(("git -C %s rev-parse HEAD"):format(vim.fn.shellescape(pack.install_path)))
 end
 
 local function packadd(pack)
-    vim.api.nvim_command("packadd " .. vim.fn.fnameescape(pack.packadd_path))
+    vim.cmd(("packadd %s"):format(vim.fn.fnameescape(pack.packadd_path)))
     -- work around vim#1994
     if vim.v.vim_did_enter == 1 then
         for after_source in vim.fn.glob(pack.install_path .. "/after/plugin/**/*.vim"):gmatch "[^\n]+" do
-            vim.api.nvim_command("source " .. vim.fn.fnameescape(after_source))
+            vim.cmd(("source %s"):format(vim.fn.fnameescape(after_source)))
         end
     end
 end
@@ -28,7 +28,7 @@ end
 local function post_install(pack)
     if pack.pin then
         local escaped_install_path = vim.fn.shellescape(pack.install_path)
-        os.execute("git -C " .. escaped_install_path .. " checkout --quiet " .. pack.pin)
+        os.execute(("git -C %s checkout --quiet %s"):format(escaped_install_path, pack.pin))
     end
     gen_helptags(pack)
     if pack.install then
@@ -53,7 +53,7 @@ function PackMan:new(args)
     args = args or {}
     local packman = {
         path = (args.path and vim.fn.resolve(vim.fn.fnamemodify(args.path, ":p")))
-            or vim.fn.stdpath "data" .. "/site/pack/user/",
+            or (vim.fn.stdpath "data") .. "/site/pack/user/",
 
         packs = {},
 
@@ -71,18 +71,12 @@ function PackMan:install(pack)
         return
     end
 
-    local command = "git clone --quiet --recurse-submodules --shallow-submodules "
-
-    if not pack.pin then
-        command = command .. "--depth 1 "
-    end
-
-    if pack.branch then
-        command = command .. "--branch " .. vim.fn.shellescape(pack.branch) .. " "
-    end
-
-    local escaped_install_path = vim.fn.shellescape(pack.install_path)
-    command = command .. vim.fn.shellescape(pack.repo) .. " " .. escaped_install_path
+    local command = ("git clone --quiet --recurse-submodules --shallow-submodules %s %s %s %s"):format(
+        (pack.pin and "" or "--depth 1"),
+        (pack.branch and "--branch " .. vim.fn.shellescape(pack.branch) or ""),
+        vim.fn.shellescape(pack.repo),
+        vim.fn.shellescape(pack.install_path)
+    )
 
     if self.parallel then
         pack.install_job = io.popen(command, "r")
@@ -97,7 +91,7 @@ function PackMan:update(pack)
         pack.hash = git_head_hash(pack)
 
         local escaped_install_path = vim.fn.shellescape(pack.install_path)
-        local command = "git -C " .. escaped_install_path .. " pull --quiet --recurse-submodules --update-shallow"
+        local command = ("git -C %s pull --quiet --recurse-submodules --update-shallow"):format(escaped_install_path)
 
         if self.parallel then
             pack.update_job = io.popen(command, "r")
@@ -118,17 +112,11 @@ function PackMan:request(pack)
         pack.init()
     end
 
-    local install_path = pack.name:gsub("_", "__"):gsub("/", "_")
-    if pack.branch then
-        install_path = install_path .. "/branch/" .. pack.branch
-    else
-        install_path = install_path .. "/default/default"
-    end
-    if pack.pin then
-        install_path = install_path .. "/commit/" .. pack.pin
-    else
-        install_path = install_path .. "/default/default"
-    end
+    local install_path = ("%s%s%s"):format(
+        pack.name:gsub("_", "__"):gsub("/", "_"),
+        pack.branch and ("/branch/" .. pack.branch) or "/default/default",
+        pack.pin and ("/commit/" .. pack.pin) or "/default/default",
+    )
 
     local packadd_path = install_path
     if pack.subdir then
