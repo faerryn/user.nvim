@@ -40,7 +40,7 @@ local function use(args)
 
     -- we have a repo that can be managed by packman
     if pack.repo or string.match(pack.name, "^[^/]+/[^/]+$") then
-        pack.repo = pack.repo or "https://github.com/" .. pack.name .. ".git"
+        pack.repo = pack.repo or ("https://github.com/" .. pack.name .. ".git")
         return packman:request(pack)
     end
 
@@ -66,7 +66,7 @@ end
 
 --[[
 -- flush parallel git clone jobs
--- does nothing if parallel jobs are not enabled
+-- safe to call when parallel is not enabled
 --]]
 local function flush()
     if packman.parallel then
@@ -83,6 +83,9 @@ local function update()
     packman:update_all()
 end
 
+--[[
+-- clean out packages
+--]]
 local function clean()
     packman:clean()
 end

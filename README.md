@@ -109,9 +109,15 @@ Put this at the end of your configuration.
 user.flush()
 ```
 
-`update()`: update your packages
+`update()`: update your packages (don't forget to call flush if parallel is enabled)
 ```lua
 require("user").update()
+require("user").flush()
+```
+
+`clean()`: delete packages that are not specified in your config anymore
+```lua
+require("user").clean()
 ```
 
 # News and FAQ

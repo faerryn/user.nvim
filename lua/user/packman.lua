@@ -113,7 +113,7 @@ function PackMan:request(pack)
     end
 
     local install_path = ("%s%s%s"):format(
-        pack.name:gsub("_", "__"):gsub("/", "_"),
+        pack.name:gsub("/", "_"),
         pack.branch and ("/branch/" .. pack.branch) or "/default/default",
         pack.pin and ("/commit/" .. pack.pin) or "/default/default"
     )
