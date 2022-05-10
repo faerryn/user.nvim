@@ -193,7 +193,8 @@ function PackMan:clean()
     for _, pack in pairs(self.packs) do
         keep[vim.fn.resolve(pack.install_path)] = true
     end
-    for place in vim.fn.expand(vim.fn.stdpath "data" .. "/site/pack/user/opt/*/*/*/*/*"):gmatch "[^\n]+" do
+    for place in vim.fn.glob(vim.fn.stdpath "data" .. "/site/pack/user/opt/*/*/*/*/*"):gmatch "[^\n]+" do
+        place = vim.fn.resolve(place)
         if not keep[place] then
             vim.fn.delete(place, "rf")
         end
