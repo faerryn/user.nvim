@@ -2,6 +2,8 @@
 Since the advent of vim and neovim, countless package managers have appeared and dissappeared.
 Well, here's another one, inspired by Emacs' straight.el and use-package
 
+## CHECK OUT A SHINIER PLUGIN MANAGER AT [PLOGINS.NVIM](https://github.com/faerryn/plogins.nvim)
+
 ## Philosophy
 Configurations should be reproducible and require minimal user effort.
 With `user.nvim`, there is no need to run something like `:PlugInstall`.

@@ -44,7 +44,7 @@ local function use(args)
         return packman:request(pack)
     end
 
-    -- we can install local directories too!
+    -- we can "install" local directories too!
     local path = vim.fn.fnamemodify(pack.name, ":p")
     if vim.fn.isdirectory(path) then
         vim.opt.runtimepath:prepend(path)
